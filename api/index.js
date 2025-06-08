@@ -1,9 +1,9 @@
-import fetch from 'node-fetch';
+const fetch = require('node-fetch');
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   const url = req.query.url;
   if (!url) return res.status(400).send('Missing url parameter');
-  
+
   try {
     const response = await fetch(url, {
       headers: {
@@ -17,5 +17,5 @@ export default async function handler(req, res) {
     console.error('Fetch error:', e);
     res.status(500).send('Error fetching URL: ' + e.message);
   }
-}
+};
 
