@@ -1,21 +1,23 @@
 const fetch = require('node-fetch');
 
-module.exports = async function handler(req, res) {
+module.exports = (req, res) => {
   const url = req.query.url;
   if (!url) return res.status(400).send('Missing url parameter');
 
-  try {
-    const response = await fetch(url, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)'
-      }
+  fetch(url, {
+    headers: {
+      'User-Agent': 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)'
+    }
+  })
+    .then(response => response.text())
+    .then(data => {
+      res.setHeader('Content-Type', 'text/html');
+      res.status(200).send(data);
+    })
+    .catch(error => {
+      console.error('Fetch error:', error);
+      res.status(500).send('Error fetching URL: ' + error.message);
     });
-    const data = await response.text();
-    res.setHeader('Content-Type', 'text/html');
-    res.status(200).send(data);
-  } catch (e) {
-    console.error('Fetch error:', e);
-    res.status(500).send('Error fetching URL: ' + e.message);
-  }
 };
+
 
